@@ -1,10 +1,11 @@
 import React from 'react';
 import {useSelector} from "react-redux";
-import {AppStateType, useAppDispatch} from "./redux/store";
+import {AppStateType, useAppDispatch} from "../redux/store";
 import ReactSlider from "react-slider"
-import {setBreakMinutesTC, setWorkMinutesTC} from "./redux/timer-reducer";
+import {setBreakMinutesTC, setShowSettingsTC, setWorkMinutesTC} from "../redux/timer-reducer";
 import './slider.css'
-
+import {BackButton} from "./BackButton";
+import {ToggleSwitch} from "./ToggleSwitch";
 
 const Settings = () => {
     const workMinutes = useSelector<AppStateType, number>(state => state.timer.workMinutes)
@@ -17,9 +18,13 @@ const Settings = () => {
     const setBreakMinutesHandler = (e:number) => {
         dispatch(setBreakMinutesTC(e))
     }
+    const backHandler = () => {
+        dispatch(setShowSettingsTC(false))
+    }
+
     return (
         <div style={{textAlign: "left"}}>
-            <label><>work minutes: {workMinutes}:00</></label>
+            <label>work minutes: {workMinutes}:00</label>
             <ReactSlider
                 className={'slider'}
                 thumbClassName={'thumb'}
@@ -39,9 +44,12 @@ const Settings = () => {
                 min={1}
                 max={120}
             />
-            {/*<div style={{textAlign: 'center', marginTop: '20px'}}>*/}
-            {/*    <BackButton onClick={()=> {settingsInfo.setShowSettings(false)}}/>*/}
-            {/*</div>*/}
+
+            <ToggleSwitch />
+
+            <div style={{textAlign: 'center', marginTop: '20px'}}>
+                <BackButton onClick={()=> {backHandler()}}/>
+            </div>
         </div>
     );
 };
