@@ -21,6 +21,9 @@ import {Peach} from "./Peach";
 import {Eggplant} from "./Eggplant";
 import {CancelButton} from "./CancelButton";
 import {DeleteStatisticButton} from "./DeleteStatisticButton";
+import useSound from "use-sound"
+
+
 
 const red = '#f54e4e'
 const green = '#4aec8c'
@@ -36,6 +39,11 @@ export function Timer() {
     const [secondsLeft, setSecondsLeft] = useState<number>(0)//храним количество секунд
     const [isPaused, setPaused] = useState(true)
 
+    const slap = require("./../sounds/slap.mp3")
+    const ring = require("./../sounds/ring.mp3")
+    const [playSlap] = useSound(slap)
+    const [playRing] = useSound(ring)
+
     const secondsLeftRef = useRef(secondsLeft)//позволяет сохранить некоторый объект,
     // который можно можно изменять и который хранится в течение всей жизни компонента.
     //В качестве параметра функция useRef() принимает начальное значение хранимого объекта.
@@ -50,12 +58,15 @@ export function Timer() {
 
     useEffect(() => {
         function switchMode() {
+            playRing()
             let nextMode
             if (modeRef.current === 'work') nextMode = 'break'
             if (modeRef.current === 'break') nextMode = 'work'
 
             dispatch(setModeTC(nextMode as modeType))
             modeRef.current = nextMode as modeType;
+
+
 
             const nextSeconds = (nextMode === 'work' ? workMinutes : breakMinutes) * 60
             setSecondsLeft(nextSeconds)
@@ -120,6 +131,7 @@ export function Timer() {
             </div>
             <Peach onClick={() => {
                 peachHandler()
+                playSlap()
             }}/>
             <Eggplant onClick={() => {
                 eggplantHandler()
