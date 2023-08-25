@@ -1,5 +1,5 @@
 import {AppStateType} from "./store";
-import {CombinedState, Dispatch} from "redux";
+import {Dispatch} from "redux";
 import {v1} from "uuid";
 
 
@@ -37,6 +37,7 @@ type ActionType = setWorkMinutesActionType
     | SetModeFromLSActionType
     | SetStatisticFromLSActionType
     | addPomodoroActionType
+    | deleteStatisticActionType
 
 export const timerReducer = (state: InitialStateType = initialState, action: ActionType): InitialStateType => {
     switch (action.type) {
@@ -70,43 +71,48 @@ export const timerReducer = (state: InitialStateType = initialState, action: Act
             }
         case "ADD-POMODORO":
             return {
-                ...state, statistic: [...state.statistic, {id: action.newPomodoro.id,
-                    workTime: action.newPomodoro.workTime}]
+                ...state, statistic: [...state.statistic, {
+                    id: action.newPomodoro.id,
+                    workTime: action.newPomodoro.workTime
+                }]
             }
-
+        case "DELETE-STATISTIC":
+            return {
+                ...state, statistic: []
+            }
         default:
             return state
     }
 }
 
-export const setWorkMinutesAC = (workMinutes: number) => ({type: "SET-WORK-MINUTES", workMinutes}as const)
-export type setWorkMinutesActionType =  ReturnType<typeof setWorkMinutesAC>
+export const setWorkMinutesAC = (workMinutes: number) => ({type: "SET-WORK-MINUTES", workMinutes} as const)
+export type setWorkMinutesActionType = ReturnType<typeof setWorkMinutesAC>
 export const setWorkMinutesTC = (minutes: number) => (dispatch: Dispatch) => {
     dispatch(setWorkMinutesAC(minutes))
     dispatch(setModeAC('work'))
 }
 
-export type setBreakMinutesActionType =  ReturnType<typeof setBreakMinutesAC>
-export const setBreakMinutesAC = (breakMinutes: number) => ({type: "SET-BREAK-MINUTES", breakMinutes}as const)
+export type setBreakMinutesActionType = ReturnType<typeof setBreakMinutesAC>
+export const setBreakMinutesAC = (breakMinutes: number) => ({type: "SET-BREAK-MINUTES", breakMinutes} as const)
 export const setBreakMinutesTC = (minutes: number) => (dispatch: Dispatch) => {
     dispatch(setBreakMinutesAC(minutes))
 }
 
-export type setShowSettingsActionType =  ReturnType<typeof setShowSettingsAC>
-export const setShowSettingsAC = (showSetting: boolean) => ({type: "SET-SHOW-SETTINGS", showSetting}as const)
+export type setShowSettingsActionType = ReturnType<typeof setShowSettingsAC>
+export const setShowSettingsAC = (showSetting: boolean) => ({type: "SET-SHOW-SETTINGS", showSetting} as const)
 export const setShowSettingsTC = (showSetting: boolean) => (dispatch: Dispatch) => {
     dispatch(setShowSettingsAC(showSetting))
 }
 
-export type setModeActionType =  ReturnType<typeof setModeAC>
-export const setModeAC = (mode: modeType) => ({type: "SET-MODE", mode}as const)
+export type setModeActionType = ReturnType<typeof setModeAC>
+export const setModeAC = (mode: modeType) => ({type: "SET-MODE", mode} as const)
 export const setModeTC = (mode: modeType) => (dispatch: Dispatch) => {
     dispatch(setModeAC(mode))
 }
 
 
-export type setAutoStartType =  ReturnType<typeof setAutoStartAC>
-export const setAutoStartAC = (autoStart: boolean) => ({type: "SET-AUTO-START", autoStart}as const)
+export type setAutoStartType = ReturnType<typeof setAutoStartAC>
+export const setAutoStartAC = (autoStart: boolean) => ({type: "SET-AUTO-START", autoStart} as const)
 export const setAutoStartTC = (autoStart: boolean) => (dispatch: Dispatch) => {
     dispatch(setAutoStartAC(autoStart))
     localStorage.setItem('autoStart', JSON.stringify(autoStart))
@@ -118,7 +124,10 @@ export const setModeFromLSAC = (autoStart: boolean) => ({type: 'SET-MODE-FROM-LO
 
 
 export type SetStatisticFromLSActionType = ReturnType<typeof setStatisticFromLSAC>
-export const setStatisticFromLSAC = (statistic: statisticType) => ({type: 'SET-STATISTIC-FROM-LOCAL-STORAGE', statistic} as const)
+export const setStatisticFromLSAC = (statistic: statisticType) => ({
+    type: 'SET-STATISTIC-FROM-LOCAL-STORAGE',
+    statistic
+} as const)
 
 export const setValuesFromLSTC = () => (dispatch: Dispatch) => { //берем данные из Local Storage
     let modeAsString = localStorage.getItem('autoStart')
@@ -134,10 +143,17 @@ export const setValuesFromLSTC = () => (dispatch: Dispatch) => { //берем д
 }
 
 export type addPomodoroActionType = ReturnType<typeof addPomodoroAC>
-export const addPomodoroAC = (newPomodoro: pomodoroType ) => ({type: 'ADD-POMODORO', newPomodoro} as const)
-export const addStatisticToLSTC = (value:number) => (dispatch: Dispatch, getState: () => AppStateType) => {
+export const addPomodoroAC = (newPomodoro: pomodoroType) => ({type: 'ADD-POMODORO', newPomodoro} as const)
+export const addStatisticToLSTC = (value: number) => (dispatch: Dispatch, getState: () => AppStateType) => {
     let currentStatistic = getState().timer.statistic
     let newPomodoro = {id: v1(), workTime: value}
     localStorage.setItem('statistic', JSON.stringify([...currentStatistic, newPomodoro]))
     dispatch(addPomodoroAC(newPomodoro))
+}
+
+export type deleteStatisticActionType = ReturnType<typeof deleteStatisticAC>
+export const deleteStatisticAC = () => ({type: 'DELETE-STATISTIC'} as const)
+export const deleteStatisticFromReduxAndLSTC = () => (dispatch: Dispatch) => {
+    localStorage.clear();
+    dispatch(deleteStatisticAC())
 }

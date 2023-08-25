@@ -7,7 +7,7 @@ const rootReducer = combineReducers({
     timer: timerReducer
 })
 export type AppStateType = ReturnType<typeof rootReducer>
-export const store  = createStore(rootReducer, applyMiddleware(thunk))
+export const store = createStore(rootReducer, applyMiddleware(thunk))
 //добавляем в стор мидлваре
 
 export type AppStoreType = typeof store

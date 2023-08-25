@@ -12,10 +12,10 @@ const Settings = () => {
     const breakMinutes = useSelector<AppStateType, number>(state => state.timer.breakMinutes)
 
     const dispatch = useAppDispatch()
-    const setWorkMinutesHandler = (e:number) => {
+    const setWorkMinutesHandler = (e: number) => {
         dispatch(setWorkMinutesTC(e))
     }
-    const setBreakMinutesHandler = (e:number) => {
+    const setBreakMinutesHandler = (e: number) => {
         dispatch(setBreakMinutesTC(e))
     }
     const backHandler = () => {
@@ -30,7 +30,9 @@ const Settings = () => {
                 thumbClassName={'thumb'}
                 trackClassName={'track'}
                 value={workMinutes}
-                onChange={(e)=> {setWorkMinutesHandler(e)}}
+                onChange={(e) => {
+                    setWorkMinutesHandler(e)
+                }}
                 min={1}
                 max={120}
             />
@@ -40,15 +42,17 @@ const Settings = () => {
                 thumbClassName={'thumb'}
                 trackClassName={'track'}
                 value={breakMinutes}
-                onChange={(e)=> {setBreakMinutesHandler(e)}}
+                onChange={(e) => {
+                    setBreakMinutesHandler(e)
+                }}
                 min={1}
                 max={120}
             />
-
-            <ToggleSwitch />
-
+            <ToggleSwitch/>
             <div style={{textAlign: 'center', marginTop: '20px'}}>
-                <BackButton onClick={()=> {backHandler()}}/>
+                <BackButton onClick={() => {
+                    backHandler()
+                }}/>
             </div>
         </div>
     );

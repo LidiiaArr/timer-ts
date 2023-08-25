@@ -10,7 +10,7 @@ import {useRef} from "react"
 import {useSelector} from "react-redux";
 import {AppStateType, useAppDispatch} from "../redux/store";
 import {
-    addStatisticToLSTC,
+    addStatisticToLSTC, deleteStatisticFromReduxAndLSTC,
     modeType,
     setBreakMinutesTC,
     setModeTC,
@@ -19,6 +19,8 @@ import {
 } from "../redux/timer-reducer";
 import {Peach} from "./Peach";
 import {Eggplant} from "./Eggplant";
+import {CancelButton} from "./CancelButton";
+import {DeleteStatisticButton} from "./DeleteStatisticButton";
 
 const red = '#f54e4e'
 const green = '#4aec8c'
@@ -58,10 +60,10 @@ export function Timer() {
             const nextSeconds = (nextMode === 'work' ? workMinutes : breakMinutes) * 60
             setSecondsLeft(nextSeconds)
             secondsLeftRef.current = nextSeconds
-            if(!autoStart){
+            if (!autoStart) {
                 setPaused(true)
                 isPausedRef.current = true
-            }else {
+            } else {
                 setPaused(false)
                 isPausedRef.current = false
             }
@@ -77,7 +79,7 @@ export function Timer() {
             }
             if (secondsLeftRef.current === 0) {
 
-                if(mode === 'work') dispatch(addStatisticToLSTC(workMinutes))
+                if (mode === 'work') dispatch(addStatisticToLSTC(workMinutes))
 
                 return switchMode();
             }
@@ -85,7 +87,7 @@ export function Timer() {
         }, 1000);
 
         return () => clearInterval(interval)
-    }, [workMinutes, breakMinutes, mode])
+    }, [workMinutes, breakMinutes, mode, autoStart, dispatch])
 
     const totalSeconds = mode === 'work' ? workMinutes * 60 : breakMinutes * 60
     //получаем всего количество секунд
@@ -108,9 +110,12 @@ export function Timer() {
     }
     return (
         <div>
-            <div style={{marginTop: '5px', marginLeft: '500px'}}>
+            <div style={{marginLeft: '500px', display: 'flex'}}>
                 <SettingButton onClick={() => {
                     dispatch(setShowSettingsTC(true))
+                }}/>
+                <DeleteStatisticButton onClick={() => {
+                    dispatch(deleteStatisticFromReduxAndLSTC())
                 }}/>
             </div>
             <Peach onClick={() => {
@@ -137,8 +142,14 @@ export function Timer() {
                         setPaused(true);
                         isPausedRef.current = true
                     }}/>}
+                {!isPaused && <CancelButton onClick={() => {
+                    secondsLeftRef.current = workMinutes * 60;
+                    setSecondsLeft(secondsLeftRef.current);
+                    setPaused(true);
+                    isPausedRef.current = true
+                }}/>}
             </div>
 
         </div>
     );
-};
+}

@@ -1,5 +1,4 @@
 import React, {useEffect} from 'react';
-import logo from './logo.svg';
 import './App.css';
 import {useSelector} from "react-redux";
 import {AppStateType, useAppDispatch} from "./redux/store";
@@ -9,14 +8,13 @@ import {setValuesFromLSTC} from "./redux/timer-reducer";
 import {Statistic} from "./Statistic/Statistic";
 
 function App() {
+    const showSettings = useSelector<AppStateType>(state => state.timer.showSetting)
     const dispatch = useAppDispatch()
-    const store = useSelector<AppStateType>(state => state.timer)
 
     useEffect(()=> {
         dispatch(setValuesFromLSTC())
-    },[])
+    },[dispatch])
 
-    const showSettings = useSelector<AppStateType>(state => state.timer.showSetting)
     return (
         <main>
           {showSettings ? <Settings/> : <Timer/>}
